@@ -5,7 +5,7 @@
 
     <!-- Group ID và Artifact ID cho Parent POM -->
     <groupId>com.example</groupId>
-    <artifactId>parent-pom</artifactId>
+    <artifactId>image_mngt_micro_service</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
 

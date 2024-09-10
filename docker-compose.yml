@@ -1,0 +1,71 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: image_mngt_auth_service
+    volumes:
+      - auth_postgres_db:/var/lib/postgresql/data
+
+  auth-service:
+    build:
+      context: ./auth_service
+      dockerfile: Dockerfile
+    container_name: image-mngt-auth-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/image_mngt_auth_service
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - file_mongo_db:/data/db
+
+  file-service:
+    build:
+      context: ./file_service
+      dockerfile: Dockerfile
+    container_name: image-mngt-file-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - mongodb
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/image_mngt_file_service
+
+  spring-cloud-gateway:
+    build:
+        context: ./spring-cloud-gateway
+        dockerfile: Dockerfile
+    container_name: spring-cloud-gateway
+    ports:
+      - "8080:8080"
+
+volumes:
+  file_mongo_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/sotatek/Work/Study/Project/backend/image-mngt-file-service/mongo_data
+
+  auth_postgres_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/sotatek/Work/Study/Project/backend/image_mngt_auth_service/postgres_data
+
+

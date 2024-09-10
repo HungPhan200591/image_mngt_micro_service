@@ -1,0 +1,9 @@
+[submodule "auth_service"]
+	path = auth_service
+	url = git@github.com-phanconghung200591:HungPhan200591/image_mngt_auth_service.git
+[submodule "file_service"]
+	path = file_service
+	url = git@github.com-phanconghung200591:HungPhan200591/image_mngt_file_service.git
+[submodule "spring_cloud_gateway"]
+	path = spring_cloud_gateway
+	url = git@github.com-phanconghung200591:HungPhan200591/image_mngt_spring_cloud_gateway.git

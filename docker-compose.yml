@@ -104,21 +104,21 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ${BASE_PATH}/auth_service/postgres_data
+      device: ${BASE_PATH}/volumes_docker/auth_service/postgres_data
 
   file_mongo_db:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ${BASE_PATH}/file_service/mongo_data
+      device: ${BASE_PATH}/volumes_docker/file_service/mongo_data
 
   minio_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ${BASE_PATH}/file_service/minio_data
+      device: ${BASE_PATH}/volumes_docker/file_service/minio_data
 networks:
   my_network:
     driver: bridge

@@ -50,6 +50,21 @@ services:
       timeout: 5s
       retries: 5
 
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "${MINIO_PORT}:${MINIO_PORT}"
+      - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - my_network
+
   file-service:
     build:
       context: ./file_service
@@ -76,7 +91,7 @@ services:
       dockerfile: Dockerfile
     container_name: spring-cloud-gateway
     ports:
-      - "${GATEWAY_PORT}:${GATEWAY_PORT}"
+      - "${SPRING_CLOUD_GATEWAY_PORT}:${SPRING_CLOUD_GATEWAY_PORT}"
     networks:
       - my_network
     environment:
@@ -98,6 +113,12 @@ volumes:
       o: bind
       device: ${BASE_PATH}/file_service/mongo_data
 
+  minio_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${BASE_PATH}/file_service/minio_data
 networks:
   my_network:
     driver: bridge

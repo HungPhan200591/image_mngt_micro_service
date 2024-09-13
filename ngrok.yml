@@ -1,0 +1,18 @@
+version: "2"
+authtoken: "YOUR_NGROK_AUTH_TOKEN"
+tunnels:
+#  auth-service:
+#    addr: auth-service:8081
+#    proto: http
+#  file-service:
+#    addr: 8082
+#    proto: http
+  spring-cloud-gateway:
+    addr: spring-cloud-gateway:8080
+    proto: http
+  minio:
+    addr: minio:9000
+    proto: http
+  minio-console:
+    addr: minio:9001
+    proto: http

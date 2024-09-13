@@ -3,6 +3,7 @@
 - [Các best practices cho CI/CD trong kiến trúc microservices](#các-best-practices-cho-cicd-trong-kiến-trúc-microservices)
 - [Triển khai CICD với multiple repo](#triển-khai-cicd-với-multiple-repo)
 - [Lý do Linux được ưu tiên làm server](#lý-do-linux-được-ưu-tiên-làm-server)
+- [Cách GitHub gửi tín hiệu đến Self-hosted runner](#Cách-GitHub-gửi-tín-hiệu-đến-Self-hosted-runner)
 
 ## Các best practices cho CI/CD trong kiến trúc microservices
 
@@ -170,3 +171,39 @@ Với các best practices này, bạn có thể đảm bảo quy trình phát tr
 
 ### Kết luận:
 Linux thường được dùng làm server vì tính hiệu quả, bảo mật, khả năng tùy chỉnh cao, chi phí thấp, và sự hỗ trợ mạnh mẽ từ cộng đồng mã nguồn mở. Windows có thể được sử dụng trong các trường hợp đặc biệt, nhưng trong phần lớn các trường hợp, Linux là lựa chọn hàng đầu cho các hệ thống server.
+
+Self-hosted runner hoạt động bằng cách thiết lập một kết nối ngược lại từ runner tới GitHub. Đây là cách hoạt động của GitHub Actions Self-hosted runner:
+
+================================================================================
+
+## Cách GitHub gửi tín hiệu đến Self-hosted runner
+
+1. **Đăng ký Self-hosted runner với GitHub:**
+  - Khi bạn cài đặt một Self-hosted runner trên máy tính của mình, runner này sẽ được đăng ký với repository hoặc tổ chức GitHub mà bạn muốn nó phục vụ. Quá trình đăng ký này yêu cầu bạn phải tạo một token trên GitHub và sử dụng nó để cấu hình runner.
+  - Runner sẽ liên tục gửi yêu cầu (polling) đến GitHub để kiểm tra xem có công việc nào (job) mới cần thực thi không.
+
+2. **Polling (Gửi yêu cầu liên tục) từ Runner đến GitHub:**
+  - Self-hosted runner liên tục thực hiện các yêu cầu HTTP đến GitHub theo chu kỳ (thường là vài giây một lần) để hỏi xem có workflow nào được kích hoạt và yêu cầu xử lý không.
+  - Nếu GitHub có một workflow mới được kích hoạt và có công việc được chỉ định cho runner đó, GitHub sẽ trả lời yêu cầu với thông tin chi tiết về công việc cần làm.
+
+3. **Thực hiện công việc:**
+  - Sau khi nhận được thông tin công việc từ GitHub, runner sẽ tải xuống mã nguồn và các phần cần thiết khác để thực hiện công việc.
+  - Runner sau đó sẽ thực hiện công việc theo các bước được định nghĩa trong file workflow (file `.yml` trong `.github/workflows` của repository).
+
+4. **Báo cáo kết quả:**
+  - Khi công việc hoàn tất (hoặc bị lỗi), runner sẽ gửi kết quả (success/failure và các logs) trở lại GitHub thông qua các yêu cầu HTTP khác.
+
+### Kết nối giữa Runner và GitHub qua Internet như thế nào?
+
+- **Giao tiếp qua HTTPS:** Self-hosted runner sử dụng HTTPS để giao tiếp với GitHub. Kết nối này bảo mật, giúp đảm bảo rằng các thông tin được trao đổi giữa runner và GitHub không bị xâm phạm.
+- **Polling (Yêu cầu liên tục):** GitHub không trực tiếp gửi yêu cầu đến runner, mà runner sẽ chủ động kiểm tra với GitHub thông qua các yêu cầu HTTP định kỳ. Đây là cơ chế giúp tự runner "hỏi" GitHub xem có công việc nào cần thực hiện hay không.
+
+### Vì sao sử dụng Polling thay vì Webhook?
+
+- **Bảo mật:** Vì runner có thể nằm trong mạng nội bộ hoặc đằng sau tường lửa (firewall), việc mở cổng để GitHub có thể gửi yêu cầu đến runner sẽ gây ra nhiều rủi ro bảo mật.
+- **Đơn giản và tương thích:** Cách làm này giúp đơn giản hóa việc triển khai và cấu hình runner mà không cần phải lo lắng về NAT, firewall, hay các cấu hình mạng phức tạp khác.
+
+### Tóm lại:
+
+Runner không cần phải mở bất kỳ cổng nào hoặc nhận yêu cầu từ GitHub, thay vào đó runner luôn kiểm tra với GitHub qua kết nối HTTPS để xem có công việc nào cần làm. Điều này đảm bảo runner luôn có thể hoạt động sau tường lửa mà không cần cấu hình mạng phức tạp, và cũng giúp giữ bảo mật cho hệ thống.
+

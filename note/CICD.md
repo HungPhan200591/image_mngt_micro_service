@@ -4,6 +4,7 @@
 - [Triển khai CICD với multiple repo](#triển-khai-cicd-với-multiple-repo)
 - [Lý do Linux được ưu tiên làm server](#lý-do-linux-được-ưu-tiên-làm-server)
 - [Cách GitHub gửi tín hiệu đến Self-hosted runner](#Cách-GitHub-gửi-tín-hiệu-đến-Self-hosted-runner)
+- [Polling và Webhooks trong CICD](#Polling-và-Webhooks-trong-CICD)
 
 ## Các best practices cho CI/CD trong kiến trúc microservices
 
@@ -207,3 +208,46 @@ Self-hosted runner hoạt động bằng cách thiết lập một kết nối n
 
 Runner không cần phải mở bất kỳ cổng nào hoặc nhận yêu cầu từ GitHub, thay vào đó runner luôn kiểm tra với GitHub qua kết nối HTTPS để xem có công việc nào cần làm. Điều này đảm bảo runner luôn có thể hoạt động sau tường lửa mà không cần cấu hình mạng phức tạp, và cũng giúp giữ bảo mật cho hệ thống.
 
+================================================================================
+
+## Polling và Webhooks trong CICD
+## 1. **GitHub Actions và Self-Hosted Runners**
+
+- **Self-Hosted Runners của GitHub Actions sử dụng Polling.**
+  - GitHub Actions self-hosted runners liên tục gửi yêu cầu (poll) tới GitHub để kiểm tra xem có tác vụ (job) nào cần thực hiện không.
+  - Polling này diễn ra đều đặn và có thể được cấu hình để thay đổi tần suất (mặc định là vài giây một lần).
+  - Ưu điểm của phương pháp này là đơn giản, dễ thiết lập, và không cần phải mở cổng trên firewall cho các kết nối đầu vào.
+  - Tuy nhiên, Polling có thể gây ra một số overhead về mạng và tài nguyên, nhất là khi số lượng runners và các tác vụ tăng lên.
+
+### 2. **GitLab CI và Runners**
+
+- **GitLab Runners sử dụng Polling.**
+  - Giống như GitHub Actions, GitLab Runners (bao gồm cả Shared và Self-Hosted Runners) cũng sử dụng phương pháp Polling để kiểm tra công việc mới từ GitLab CI/CD server.
+  - Runners sẽ gửi yêu cầu liên tục đến server GitLab để kiểm tra xem có job mới nào cần chạy không.
+  - Tần suất của Polling có thể được cấu hình thông qua `gitlab-runner` configuration file (mặc định là 3 giây).
+
+### 3. **Jenkins và Agents**
+
+- **Jenkins Agents chủ yếu sử dụng WebSockets (hoặc JNLP - Java Network Launch Protocol).**
+  - Jenkins có một kiến trúc khác với GitHub Actions và GitLab CI:
+    - **Jenkins Master** (hoặc Controller) chịu trách nhiệm phân phối công việc cho **Jenkins Agents**.
+    - **Jenkins Agents** kết nối với Jenkins Master qua WebSocket hoặc JNLP để duy trì một kết nối liên tục.
+  - **WebSockets/JNLP:** Agent duy trì kết nối liên tục đến Jenkins Master. Khi có công việc mới, Jenkins Master ngay lập tức gửi yêu cầu đến Agent để thực thi.
+  - Phương pháp này hiệu quả hơn so với Polling vì không cần phải gửi các yêu cầu liên tục để kiểm tra công việc mới mà chỉ cần nhận tín hiệu khi có thay đổi.
+
+### 4. **So sánh giữa Polling và WebSockets:**
+
+- **Polling (GitHub Actions, GitLab CI):**
+  - Ưu điểm: Dễ thiết lập, không cần mở các cổng đầu vào trên firewall.
+  - Nhược điểm: Tiêu tốn băng thông mạng và tài nguyên vì phải gửi yêu cầu liên tục.
+
+- **WebSockets (Jenkins):**
+  - Ưu điểm: Hiệu quả hơn vì chỉ duy trì một kết nối liên tục và nhận dữ liệu khi cần. Phản hồi nhanh hơn khi có công việc mới.
+  - Nhược điểm: Cần cấu hình mạng, firewall để cho phép các kết nối vào từ Agents đến Master, có thể phức tạp hơn để cài đặt và quản lý.
+
+### Tóm lại:
+
+- **GitHub Actions và GitLab CI** sử dụng **Polling** để kết nối giữa Runner và server.
+- **Jenkins** chủ yếu sử dụng **WebSockets** (hoặc JNLP) cho kết nối liên tục giữa Agents và Master.
+
+Bạn có thể sử dụng phương pháp phù hợp với yêu cầu cụ thể và hạ tầng của dự án bạn đang triển khai.

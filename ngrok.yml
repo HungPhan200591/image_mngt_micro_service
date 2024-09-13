@@ -1,6 +1,9 @@
 version: "2"
 authtoken: "YOUR_NGROK_AUTH_TOKEN"
 tunnels:
+  ssh:
+    addr: 22
+    proto: tcp
 #  auth-service:
 #    addr: auth-service:8081
 #    proto: http

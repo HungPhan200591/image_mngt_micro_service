@@ -117,20 +117,6 @@ services:
     networks:
       - my_network
 
-#  ngrok-spring-cloud-gateway:
-#    image: ngrok/ngrok
-#    container_name: ngrok-spring-cloud-gateway
-#    environment:
-#      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
-#    command: "http spring-cloud-gateway:${SPRING_CLOUD_GATEWAY_PORT}"
-#    ports:
-#      - "4045:4040"
-#    depends_on:
-#      - spring-cloud-gateway
-#    networks:
-#      - my_network
-
-
 volumes:
   auth_postgres_db:
     driver: local

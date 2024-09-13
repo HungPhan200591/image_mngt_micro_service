@@ -117,58 +117,6 @@ services:
     networks:
       - my_network
 
-#  ngrok-postgres:
-#    image: ngrok/ngrok
-#    container_name: ngrok-postgres
-#    environment:
-#      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
-#    command: "tcp postgres:${POSTGRES_PORT}"
-#    ports:
-#      - "4041:4040"
-#    depends_on:
-#      - postgres
-#    networks:
-#      - my_network
-
-#  ngrok-auth-service:
-#    image: ngrok/ngrok
-#    container_name: ngrok-auth-service
-#    environment:
-#      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
-#    command: "http auth-service:${AUTH_SERVICE_PORT}"
-#    ports:
-#      - "4042:4040"
-#    depends_on:
-#      - auth-service
-#    networks:
-#      - my_network
-
-#  ngrok-mongodb:
-#    image: ngrok/ngrok
-#    container_name: ngrok-mongodb
-#    environment:
-#      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
-#    command: "tcp mongodb:${MONGODB_PORT}"
-#    ports:
-#      - "4043:4040"
-#    depends_on:
-#      - mongodb
-#    networks:
-#      - my_network
-#
-#  ngrok-file-service:
-#    image: ngrok/ngrok
-#    container_name: ngrok-file-service
-#    environment:
-#      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
-#    command: "http file-service:${FILE_SERVICE_PORT}"
-#    ports:
-#      - "4044:4040"
-#    depends_on:
-#      - file-service
-#    networks:
-#      - my_network
-#
 #  ngrok-spring-cloud-gateway:
 #    image: ngrok/ngrok
 #    container_name: ngrok-spring-cloud-gateway
@@ -179,32 +127,6 @@ services:
 #      - "4045:4040"
 #    depends_on:
 #      - spring-cloud-gateway
-#    networks:
-#      - my_network
-#
-#  ngrok-minio:
-#    image: ngrok/ngrok
-#    container_name: ngrok-minio
-#    environment:
-#      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
-#    command: "http minio:${MINIO_PORT}"
-#    ports:
-#      - "4046:4040"
-#    depends_on:
-#      - minio
-#    networks:
-#      - my_network
-#
-#  ngrok-minio-console:
-#    image: ngrok/ngrok
-#    container_name: ngrok-minio-console
-#    environment:
-#      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
-#    command: "http ${MINIO_CONSOLE_PORT}"
-#    ports:
-#      - "4047:4040"
-#    depends_on:
-#      - minio
 #    networks:
 #      - my_network
 

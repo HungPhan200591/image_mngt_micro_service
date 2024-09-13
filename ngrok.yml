@@ -1,9 +1,8 @@
 version: "2"
-authtoken: "YOUR_NGROK_AUTH_TOKEN"
 tunnels:
-  ssh:
-    addr: 22
-    proto: tcp
+#  ssh:
+#    addr: 22
+#    proto: tcp
 #  auth-service:
 #    addr: auth-service:8081
 #    proto: http
@@ -13,9 +12,9 @@ tunnels:
   spring-cloud-gateway:
     addr: spring-cloud-gateway:8080
     proto: http
-  minio:
-    addr: minio:9000
-    proto: http
+#  minio:
+#    addr: minio:9000
+#    proto: http
   minio-console:
     addr: minio:9001
     proto: http
